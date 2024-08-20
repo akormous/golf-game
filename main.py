@@ -2,23 +2,25 @@ import pygame, sys
 
 pygame.init()
 
+clock = pygame.time.Clock()
 
 # Size of the game screen
 size = width, height = 1920, 1080
 MOVE_SPEED = 1 
-speed = [0,0]
+speed = [0,1]
 black = 0,0,0
-
+sky = 90,204,219
+night_sky = 35,81,87
 screen = pygame.display.set_mode(size)
 
 ball = pygame.image.load("intro_ball.gif")
 ballrect = ball.get_rect()
 
-box_w, box_h = 100, 720
-box_color = 255,0,0
-box_color_2 = 255,255,255
-box_rect = pygame.Rect(960, 100, box_w, box_h)
+ground_rect = pygame.Rect(0, 980, width, 100)
+ground_color = 81, 214, 90
 
+jump_height = 15
+gravity = 1
 
 while True:
     # game loop
@@ -28,33 +30,40 @@ while True:
 
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_UP:
-                print("UP KEY PRESSED!")
-                speed[1] = -MOVE_SPEED
+                print("JUMP!")
             elif event.key == pygame.K_DOWN:
                 print("DOWN KEY PRESSED!")
-                speed[1] = MOVE_SPEED
             elif event.key  == pygame.K_LEFT:
                 print("LEFT KEY PRESSED!")
-                speed[0] = -MOVE_SPEED
             elif event.key == pygame.K_RIGHT:
                 print("RIGHT KEY PRESSED!")
-                speed[0] = MOVE_SPEED
             
+    keys = pygame.key.get_pressed()
+    if keys[pygame.K_UP] and ballrect.bottom == 980:
+        speed[1] = -jump_height
+    elif keys[pygame.K_RIGHT]:
+        speed[0] = jump_height
+
+
     ballrect = ballrect.move(speed)
-
-    if ballrect.left < 0 or ballrect.right > width:
-        speed[0] = 0
-    if ballrect.top < 0 or ballrect.bottom > height:
-        speed[1] = 0
-
-    if ballrect.colliderect(box_rect):
-        print("Collsion detected!")
-        speed[0] = 0
-        speed[1] = 0
-        box_color = box_color_2
-
+    speed[1] += gravity
+    if speed[0] != 0:
+        speed[0] -= gravity
     
-    screen.fill(black)
+    if ballrect.bottom >= 980:
+        ballrect.bottom = 980
+        speed[1] = 0
+
+    # if ball is out of bounds
+    if ballrect.left < 0 or ballrect.right > width:
+        speed[0] = -speed[0]
+    if ballrect.top < 0 or ballrect.bottom > height:
+        speed[1] = -speed[1]
+
+
+       
+    screen.fill(night_sky)
     screen.blit(ball, ballrect)
-    pygame.draw.rect(screen, box_color, box_rect)
+    pygame.draw.rect(screen, ground_color, ground_rect)
     pygame.display.flip()
+    clock.tick(60)
