@@ -1,4 +1,5 @@
 import pygame, sys
+import ball
 
 pygame.init()
 
@@ -13,7 +14,8 @@ sky = 90,204,219
 night_sky = 35,81,87
 screen = pygame.display.set_mode(size)
 
-ball = pygame.image.load("intro_ball.gif")
+ball = ball.Ball(x=250, y=250, radius=20, color=(0, 0, 255), speed_x=2, speed_y=2)
+
 ballrect = ball.get_rect()
 
 ground_rect = pygame.Rect(0, 980, width, 100)
