@@ -10,6 +10,7 @@ GRASS = (49, 145, 65)
 BLACK = (0, 0, 0)
 YELLOW = (255, 225, 0)
 RED = (184, 0, 31)
+ALPHA = (0, 255, 0)
 
 # BALL
 # RADIUS

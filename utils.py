@@ -1,4 +1,5 @@
 import math
+from constants import SCREEN_WIDTH
 import pygame
 
 def sign(num: int):
@@ -17,3 +18,5 @@ def draw_dotted_line(surface, start_pos, end_pos, color, initial_dot_radius=8, s
             # The radius of the dots decreases as the distance increases
             dot_radius = max(2, initial_dot_radius * (1 - i / num_dots))
             pygame.draw.circle(surface, color, (int(dot_pos.x), int(dot_pos.y)), int(dot_radius))
+
+

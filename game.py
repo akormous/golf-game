@@ -22,11 +22,20 @@ class Game:
 
     # checks if ball is colliding with terrain
     def is_colliding(self, terrain) -> bool:
-        if self.ball.y + self.ball.radius >= terrain.top:
-            self.ball.y = terrain.top - self.ball.radius
-            return True
         return False
- 
+        # Check for collision
+ #        if circle_polygon_collision(self.ball.get_pos(), self.ball.radius, terrain):
+ #            print("Collision detected!")
+ #            return True
+ #            # pygame.draw.circle(screen, (255, 0, 0), circle_center, circle_radius, 3)
+ #        else:
+ #            # pygame.draw.circle(screen, (0, 0, 255), circle_center, circle_radius, 3)
+ #            return False
+ # #        if self.ball.y + self.ball.radius >= terrain.top:
+ #            self.ball.y = terrain.top - self.ball.radius
+ #            return True
+ #        return False
+ # 
     def invert_speed_y(self):
         if abs(self.ball.get_speed_y()) < DAMP:
             self.ball.set_speed_y(0)

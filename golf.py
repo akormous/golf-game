@@ -1,6 +1,7 @@
 from ball import Ball
 from constants import COORD_X, COORD_Y, GRASS, RADIUS, RED, SCREEN_LENGTH, SCREEN_WIDTH, SKY, SPEED_X, SPEED_Y, WHITE, YELLOW
 from game import Game
+from level import Level
 import pygame
 from utils import draw_dotted_line
 
@@ -9,9 +10,21 @@ pygame.init()
 clock = pygame.time.Clock()
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_LENGTH))
 
-terrain = pygame.Rect(0, 720, SCREEN_WIDTH, 360)
-ball = Ball(COORD_X, COORD_Y, RADIUS, WHITE, SPEED_X, SPEED_Y)
+gloc = []
+tx = 64
+ty = 64
 
+i = 0
+while i <= (SCREEN_WIDTH / tx) + tx:
+    gloc.append(i * tx)
+    i = i + 1
+
+level = Level()
+ground_list = level.ground(gloc, tx, ty)
+plat_list = level.platform(tx, ty)
+
+ball = Ball(COORD_X, COORD_Y, RADIUS, WHITE, SPEED_X, SPEED_Y)
+terrain = pygame.Rect(0, 720, SCREEN_WIDTH, 360)
 game = Game(terrain)
 dragging = False
 initial_mouse_pos = pygame.math.Vector2(0,0)
@@ -46,8 +59,9 @@ while running:
     game.ball.move()
     game.simulate_physics()
 
-    pygame.draw.rect(screen, GRASS, game.terrain)
     game.ball.draw(screen)
+    ground_list.draw(screen)
+    plat_list.draw(screen)
 
     if dragging:
         current_mouse_pos = pygame.Vector2(pygame.mouse.get_pos())
