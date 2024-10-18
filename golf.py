@@ -1,74 +1,61 @@
-from ball import Ball
-from constants import COORD_X, COORD_Y, GRASS, RADIUS, RED, SCREEN_LENGTH, SCREEN_WIDTH, SKY, SPEED_X, SPEED_Y, WHITE, YELLOW
-from game import Game
-from level import Level
 import pygame
-from utils import draw_dotted_line
+from ball import Ball
+from level import Level
 
+# Initialize Pygame
 pygame.init()
 
-clock = pygame.time.Clock()
-screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_LENGTH))
+# Screen dimensions
+WIDTH, HEIGHT = 800, 600
+screen = pygame.display.set_mode((WIDTH, HEIGHT))
+pygame.display.set_caption("Golf Game with Levels")
 
-gloc = []
-tx = 64
-ty = 64
+# Colors
+WHITE = (255, 255, 255)
 
-i = 0
-while i <= (SCREEN_WIDTH / tx) + tx:
-    gloc.append(i * tx)
-    i = i + 1
+# Initialize level system and set up first level
+level_manager = Level()
+current_level = 1
+level_manager.setup_level(current_level)
 
-level = Level()
-ground_list = level.ground(gloc, tx, ty)
-plat_list = level.platform(tx, ty)
+# Create ball sprite
+ball = Ball(WIDTH // 2, HEIGHT // 2, 20)
+ball_group = pygame.sprite.Group(ball)
 
-ball = Ball(COORD_X, COORD_Y, RADIUS, WHITE, SPEED_X, SPEED_Y)
-terrain = pygame.Rect(0, 720, SCREEN_WIDTH, 360)
-game = Game(terrain)
-dragging = False
-initial_mouse_pos = pygame.math.Vector2(0,0)
-
-# Game loop
+# Main game loop
 running = True
+clock = pygame.time.Clock()
+
+# In the main game loop
+
+# Main game loop
+running = True
+clock = pygame.time.Clock()
+
 while running:
-    screen.fill(SKY)
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
-        elif event.type == pygame.MOUSEBUTTONDOWN:
-            # Check if the click is on the ball
-            mouse_pos = pygame.math.Vector2(event.pos)
-            if (mouse_pos - game.ball.get_pos()).length() <= game.ball.radius:
-                dragging = True
-                initial_mouse_pos = mouse_pos
-        elif event.type == pygame.MOUSEBUTTONUP:
-            if dragging:
-                # Calculate the velocity vector
-                final_mouse_pos = pygame.math.Vector2(event.pos)
-                drag_vector = initial_mouse_pos - final_mouse_pos
-                ball_velocity = drag_vector * 0.1 # Scale down the speed
-                game.ball.set_speed( ball_velocity )
-                dragging = False
-        elif event.type == pygame.MOUSEMOTION and dragging:
-            # Update the position of the ball (optional, for a drag effect)
-            pass
+
+        # Handle mouse input for the ball
+        ball.handle_mouse_event(event)
+
+    # Update the ball's position and handle gravity and collisions
+    ball_group.update(level_manager.platforms, WIDTH, HEIGHT)
+
+    # Clear the screen
+    screen.fill(WHITE)
     
+    # Draw platforms and ball
+    level_manager.platforms.draw(screen)
+    ball_group.draw(screen)
 
+    # Draw the trajectory when the ball is being dragged
+    ball.draw_trajectory(screen)
 
-    game.ball.move()
-    game.simulate_physics()
-
-    game.ball.draw(screen)
-    ground_list.draw(screen)
-    plat_list.draw(screen)
-
-    if dragging:
-        current_mouse_pos = pygame.Vector2(pygame.mouse.get_pos())
-        drag_vector = initial_mouse_pos - current_mouse_pos
-        if drag_vector.length() > 0:  # Check if the drag vector is not zero
-            arrow_end_pos = game.ball.get_pos() + drag_vector
-            draw_dotted_line(screen, game.ball.get_pos(), arrow_end_pos, RED)
-
+    # Update the display
     pygame.display.flip()
+    
+    # Cap the frame rate
     clock.tick(60)
+pygame.quit()

@@ -28,6 +28,6 @@ GRAVITY = 1
 FRICTION_COEFFICIENT = 0.95
 DAMP = 10
 JUMP = 32
-
+MAX_LAUNCH_POWER = 15  # Max speed for the launch
 
 
