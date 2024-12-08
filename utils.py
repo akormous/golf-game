@@ -1,5 +1,5 @@
 import math
-from constants import SCREEN_WIDTH
+from constants import Screen
 import pygame
 
 def sign(num: int):
